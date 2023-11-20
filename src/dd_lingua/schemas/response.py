@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field, conlist
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ModelAnnotation(BaseModel):
@@ -12,5 +12,10 @@ class ModelAnnotation(BaseModel):
     model_config = ConfigDict(protected_namespaces=())
 
 
-class ClipResponse(ModelAnnotation):
-    embedding: conlist(float, min_length=512, max_length=512) = Field(None, description="CLIP response of embedding")
+class LanguageDetection(ModelAnnotation):
+    """Language annotation object"""
+
+    language: str = Field(..., description="Language of the text")
+    offset: Optional[int] = Field(None, description="Offset of the text")
+    length: Optional[int] = Field(None, description="Length of the text")
+    conf: Optional[float] = Field(None, description="Confidence of the prediction")
