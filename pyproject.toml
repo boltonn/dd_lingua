@@ -1,0 +1,30 @@
+[project]
+name = "dd_lingua"
+description = "A repository for language identification."
+keywords = ["code-switching", "language-identification", "nlp"]
+version = "0.0.1"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+dependencies = [
+    "lingua-language-detector",
+    "loguru",
+    "pydantic>=2",
+    "pydantic-settings",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "httpx", "black", "flake8", "isort"]
+fastapi = ["uvicorn", "gunicorn", "python-multipart", "aiohttp", "fastapi"]
+kafka = ["faststream[kafka]"]
+rabbit = ["faststream[rabbit]"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[project.scripts]
+queue = "dd_lingua.interfaces._queue:main"
+api = "dd_lingua.interfaces._api:main"
