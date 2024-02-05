@@ -19,7 +19,9 @@ class LinguaSupportedISO15924(StrEnum):
 
 
 DEFAULT_LANGUAGES = [
+    LinguaSupportedISO639_3.ara,
     LinguaSupportedISO639_3.eng,
+    LinguaSupportedISO639_3.fas,
     LinguaSupportedISO639_3.fra,
     LinguaSupportedISO639_3.jpn,
     LinguaSupportedISO639_3.kor,

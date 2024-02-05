@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from dd_lingua.core.model import Lingua
 from dd_lingua.schemas.request import LinguaTextRequest
-from dd_lingua.schemas.response import LanguageDetection
+from dd_lingua.schemas.response import LanguageDetection, SimplifiedMultlilingualDetection
 from dd_lingua.schemas.settings import settings
 from dd_lingua.utils.health import ServiceHealthStatus, service_health
 from dd_lingua.utils.info import ServiceInfo, service_info
@@ -21,7 +21,12 @@ state = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    state["model"] = Lingua()
+    state["model"] = Lingua(
+        eager_mode=settings.eager_mode,
+        low_accuracy=settings.low_accuracy,
+        script=settings.script,
+        languages=settings.languages
+    )
     service_health.status = ServiceHealthStatus.OK
     yield
     state.clear()
@@ -41,8 +46,13 @@ async def info() -> ServiceInfo:
 
 
 @app.post("/inference", response_model_exclude_none=True)
-async def infer_image(request: LinguaTextRequest) -> LanguageDetection | list[LanguageDetection]:
-    output =  state["model"].infer(text=request.text, multilingual=request.multilingual, max_chars=request.max_chars)
+async def infer_image(request: LinguaTextRequest) -> LanguageDetection | list[LanguageDetection] | SimplifiedMultlilingualDetection:
+    output =  state["model"].infer(
+        text=request.text, 
+        multilingual=request.multilingual, 
+        max_chars=request.max_chars, 
+        simplified=request.simplified
+    )
     logger.info(f"Detected language(s) {output}")
     return output
 

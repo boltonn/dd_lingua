@@ -9,8 +9,8 @@ from dd_lingua.core.utils import LinguaSupportedISO639_3, LinguaSupportedISO1592
 class Settings(BaseSettings):
     host: str = Field("0.0.0.0", validation_alias="HOST", description="Host to bind to")
     port: int = Field(8080, validation_alias="PORT", description="Port to bind to")
-    eager_mode: bool = Field(False, description="Eager mode by default loads all models which can alleviate load times")
-    high_accuracy: bool = Field(False, description="High accuracy mode which is slower but more accurate")
+    eager_mode: bool = Field(True, description="Eager mode by default loads all models which can alleviate load times")
+    low_accuracy: bool = Field(True, description="High accuracy mode which is slower but more accurate")
     script: Optional[LinguaSupportedISO15924] = Field(None, description="Loads all the language models for that script")
     languages: Optional[list[LinguaSupportedISO639_3]] = Field(None, description="Languages to l the language models for those languages")
     reload: Optional[bool] = Field(True, description="Reload mode")

@@ -1,3 +1,5 @@
+import collections, functools, operator
+
 from lingua import DetectionResult, Language, LanguageDetectorBuilder
 from loguru import logger
 
@@ -62,17 +64,26 @@ class Lingua:
             "length": det.end_index - det.start_index,
         }
 
-    def infer(self, text: str, multilingual: bool = False, max_chars: int = 5_000):
+    def infer(self, text: str, multilingual: bool = False, max_chars: int = 10_000, simplified: bool = False):
         """Predict the language of a text
 
         Args:
             text (str): Text to predict
-            multilingual (bool): Whether to detect mmultiple languages (ie. code-switching). Defaults to False.
+            multilingual (bool): Whether to detect (multiple languages (ie. code-switching). Defaults to False.
             max_characters (int): Maximum number of characters to use for prediction. Defaults to 5_000.
 
         """
         text = text[:max_chars]
 
+        output = None
         if multilingual:
-            return [Lingua.standardize_detection(detection) for detection in self._model.detect_multiple_languages_of(text)]
-        return Lingua.standardize_lang(self._model.detect_language_of(text))
+            languages = self._model.detect_multiple_languages_of(text)
+            if languages:
+                output = [Lingua.standardize_detection(detection) for detection in languages]
+                if simplified:
+                    output = {"languages": list(functools.reduce(operator.add, map(collections.Counter, [{x['language']:x['length']} for x in output])))}
+        else:
+            language = self._model.detect_language_of(text)
+            if language:
+                output = Lingua.standardize_lang(language)
+        return output
